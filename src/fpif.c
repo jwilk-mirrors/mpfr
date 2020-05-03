@@ -90,11 +90,7 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
         {                                                               \
           (buffer) = (unsigned char *) mpfr_reallocate_func             \
             ((buffer), *(buffer_size), (wanted_size));                  \
-          if ((buffer) == NULL)                                         \
-            {                                                           \
-              *(buffer_size) = 0;                                       \
-              return NULL;                                              \
-            }                                                           \
+          MPFR_ASSERTN((buffer) != 0);                                  \
         }                                                               \
       *(buffer_size) = (wanted_size);                                   \
     }                                                                   \
