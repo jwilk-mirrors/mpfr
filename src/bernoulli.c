@@ -39,7 +39,7 @@ is_prime (unsigned long p)
    using Von Staudt–Clausen theorem, which says that the denominator of B[n]
    divides the product of all primes p such that p-1 divides n.
    Since B[n] = zeta(n) * 2*n!/(2pi)^n, we compute an approximation of
-   d * zeta(n) * 2*n!/(2pi)^n and round it to the nearest integer. */
+   (2n+1)! * zeta(n) * 2*n!/(2pi)^n and round it to the nearest integer. */
 static void
 mpfr_bernoulli_internal (mpz_t *b, unsigned long n)
 {
@@ -86,8 +86,9 @@ mpfr_bernoulli_internal (mpz_t *b, unsigned long n)
       mpfr_mul_ui (z, z, n, MPFR_RNDU);
       p = mpfr_get_ui (z, MPFR_RNDU); /* (n/e/2/pi)^n <= 2^p */
       mpfr_clear (z);
-      /* the +14 term ensures no rounding failure up to n=10000 */
-      prec += p + mpz_sizeinbase (den, 2) + 14;
+      prec += p + mpz_sizeinbase (den, 2);
+      /* the +2 term ensures no rounding failure up to n=10000 */
+      prec += __gmpfr_ceil_log2 (prec) + 2;
     }
 
  try_again:
@@ -184,7 +185,6 @@ mpfr_bernoulli_internal (mpz_t *b, unsigned long n)
   mpz_mul_ui (t, t, n + 1);
   mpz_divexact (t, t, den); /* t was still n! */
   mpz_mul (num, num, t);
-  mpz_set_ui (den, 1);
 
   mpfr_clear (y);
   mpfr_clear (z);
