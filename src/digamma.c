@@ -22,6 +22,10 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 
 #include "mpfr-impl.h"
 
+/* FIXME: Check that MPFR_GET_EXP can only be called on regular values
+   (in r14025, this is not the case) and that there cannot be integer
+   overflows. */
+
 /* Put in s an approximation of digamma(x).
    Assumes x >= 2.
    Assumes s does not overlap with x.
@@ -36,7 +40,7 @@ mpfr_digamma_approx (mpfr_ptr s, mpfr_srcptr x)
   mpfr_exp_t e, exps, f, expu;
   unsigned long n;
 
-  MPFR_ASSERTN(MPFR_IS_POS(x) && (MPFR_EXP(x) >= 2));
+  MPFR_ASSERTN (MPFR_IS_POS (x) && MPFR_GET_EXP (x) >= 2);
 
   mpfr_init2 (t, p);
   mpfr_init2 (u, p);
@@ -74,13 +78,13 @@ mpfr_digamma_approx (mpfr_ptr s, mpfr_srcptr x)
       /* if the terms 'u' are decreasing by a factor two at least,
          then the error coming from those is bounded by
          sum((10n+4)/2^n, n=1..infinity) = 24 */
-      exps = mpfr_get_exp (s);
-      expu = mpfr_get_exp (u);
+      exps = MPFR_GET_EXP (s);
+      expu = MPFR_GET_EXP (u);
       if (expu < exps - (mpfr_exp_t) p)
         break;
       mpfr_sub (s, s, u, MPFR_RNDN); /* error <= 24 + n/2 */
-      if (mpfr_get_exp (s) < exps)
-        e <<= exps - mpfr_get_exp (s);
+      if (MPFR_GET_EXP (s) < exps)
+        e <<= exps - MPFR_GET_EXP (s);
       e ++; /* error in mpfr_sub */
       f = 10 * n + 4;
       while (expu < exps)
@@ -111,9 +115,9 @@ mpfr_digamma_approx (mpfr_ptr s, mpfr_srcptr x)
 static int
 mpfr_digamma_reflection (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
 {
-  mpfr_prec_t p = MPFR_PREC(y) + 10, q;
+  mpfr_prec_t p = MPFR_PREC(y) + 10;
   mpfr_t t, u, v;
-  mpfr_exp_t e1, expv;
+  mpfr_exp_t e1, expv, expx, q;
   int inex;
   MPFR_ZIV_DECL (loop);
 
@@ -125,12 +129,14 @@ mpfr_digamma_reflection (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
      q = PREC(x)-EXP(x) is ok, otherwise if -1 <= x < 0, q = PREC(x)-EXP(x)
      is ok, otherwise for x < -1, PREC(x) is ok if EXP(x) <= PREC(x),
      otherwise we need EXP(x) */
-  if (MPFR_EXP(x) < 0)
-    q = MPFR_PREC(x) + 1 - MPFR_EXP(x);
-  else if (MPFR_EXP(x) <= MPFR_PREC(x))
+  expx = MPFR_GET_EXP (x);
+  if (expx < 0)
+    q = MPFR_PREC(x) + 1 - expx;
+  else if (expx <= MPFR_PREC(x))
     q = MPFR_PREC(x) + 1;
   else
-    q = MPFR_EXP(x);
+    q = expx;
+  MPFR_ASSERTN (q <= MPFR_PREC_MAX);
   mpfr_init2 (u, q);
   MPFR_DBGRES(inex = mpfr_ui_sub (u, 1, x, MPFR_RNDN));
   MPFR_ASSERTN(inex == 0);
@@ -153,10 +159,10 @@ mpfr_digamma_reflection (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
     {
       mpfr_const_pi (v, MPFR_RNDN);  /* v = Pi*(1+theta) for |theta|<=2^(-p) */
       mpfr_mul (t, v, x, MPFR_RNDN); /* (1+theta)^2 */
-      e1 = MPFR_EXP(t) - (mpfr_exp_t) p + 1; /* bound for t: err(t) <= 2^e1 */
+      e1 = MPFR_GET_EXP(t) - (mpfr_exp_t) p + 1; /* bound for t: err(t) <= 2^e1 */
       mpfr_cot (t, t, MPFR_RNDN);
       /* cot(t * (1+h)) = cot(t) - theta * (1 + cot(t)^2) with |theta|<=t*h */
-      if (MPFR_EXP(t) > 0)
+      if (MPFR_GET_EXP(t) > 0)
         e1 = e1 + 2 * MPFR_EXP(t) + 1;
       else
         e1 = e1 + 1;
@@ -165,9 +171,9 @@ mpfr_digamma_reflection (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
       mpfr_mul (t, t, v, MPFR_RNDN);
       e1 ++;
       mpfr_digamma (v, u, MPFR_RNDN);   /* error <= 1/2 ulp */
-      expv = MPFR_EXP(v);
+      expv = MPFR_GET_EXP (v);
       mpfr_sub (v, v, t, MPFR_RNDN);
-      if (MPFR_EXP(v) < MPFR_EXP(t))
+      if (MPFR_GET_EXP (v) < MPFR_GET_EXP (t))
         e1 += MPFR_EXP(t) - MPFR_EXP(v); /* scale error for t wrt new v */
       /* now take into account the 1/2 ulp error for v */
       if (expv - MPFR_EXP(v) - 1 > e1)
@@ -209,7 +215,7 @@ mpfr_digamma_positive (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
      ("y[%Pu]=%.*Rg inexact=%d", mpfr_get_prec(y), mpfr_log_prec, y, inex));
 
   /* compute a precision q such that x+1 is exact */
-  if (MPFR_PREC(x) < MPFR_EXP(x))
+  if (MPFR_PREC(x) < MPFR_GET_EXP(x))
     q = MPFR_EXP(x);
   else
     q = MPFR_PREC(x) + 1;
@@ -265,11 +271,14 @@ mpfr_digamma_positive (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
         }
       for (erru = 0; j > 1; erru++, j = (j + 1) / 2);
       errt = mpfr_digamma_approx (t, x_plus_j);
-      expt = MPFR_EXP(t);
+      expt = MPFR_GET_EXP (t);
       mpfr_sub (t, t, u, MPFR_RNDN);
-      if (MPFR_EXP(t) < expt)
+      if (MPFR_GET_EXP (t) < expt)
         errt += expt - MPFR_EXP(t);
-      if (MPFR_EXP(t) < MPFR_EXP(u))
+      /* Warning: if u is zero (which happens when x_plus_j >= min at the
+         beginning of the while loop above), EXP(u) is not defined.
+         In this case we have no error from u. */
+      if (MPFR_NOTZERO(u) && MPFR_GET_EXP (t) < MPFR_GET_EXP (u))
         erru += MPFR_EXP(u) - MPFR_EXP(t);
       if (errt > erru)
         errt = errt + 1;
@@ -352,7 +361,7 @@ mpfr_digamma (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
    |y - Digamma(x)| >= 2^(-2n-1)ufp(y), and rounding -1/x gives the correct result.
    If x < 2^E, then y > 2^(-E), thus ufp(y) > 2^(-E-1).
    A sufficient condition is thus EXP(x) <= -2 MAX(PREC(x),PREC(Y)). */
-  if (MPFR_EXP(x) < -2)
+  if (MPFR_GET_EXP (x) < -2)
     {
       if (MPFR_EXP(x) <= -2 * (mpfr_exp_t) MAX(MPFR_PREC(x), MPFR_PREC(y)))
         {
