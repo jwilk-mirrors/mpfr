@@ -1,4 +1,187 @@
 ------------------------------------------------------------------------
+r14049 | vlefevre | 2020-07-01 21:37:36 +0000 (Wed, 01 Jul 2020) | 1 line
+Changed paths:
+   M /branches/4.1/VERSION
+   M /branches/4.1/configure.ac
+   M /branches/4.1/doc/mpfr.texi
+   M /branches/4.1/src/mpfr.h
+   M /branches/4.1/src/version.c
+
+Updated version to 4.1.0-rc2.
+------------------------------------------------------------------------
+r14048 | vlefevre | 2020-07-01 13:59:32 +0000 (Wed, 01 Jul 2020) | 3 lines
+Changed paths:
+   M /branches/4.1
+   M /branches/4.1/NEWS
+
+[NEWS] Added an item saying that TLS can safely be (re-)enabled
+on Sparc.
+(merged changeset r14047 from the trunk)
+------------------------------------------------------------------------
+r14046 | vlefevre | 2020-06-29 13:57:32 +0000 (Mon, 29 Jun 2020) | 7 lines
+Changed paths:
+   M /branches/4.1
+   M /branches/4.1/tests/mpfr-test.h
+
+[tests/mpfr-test.h] Avoid a GCC bug on Sparc, at least when using TLS.
+The MPFR library itself is not affected, only a particular test. Normal
+code using the MPFR library should not be affected either, as the bug
+occurs when accessing __gmpfr_flags directly (and the public mpfr.h
+header file does not provide any macro that accesses an internal
+variable directly). So a workaround for the tests is the best solution.
+(merged changeset r14045 from the trunk)
+------------------------------------------------------------------------
+r14043 | vlefevre | 2020-06-18 17:37:41 +0000 (Thu, 18 Jun 2020) | 1 line
+Changed paths:
+   M /branches/4.1/VERSION
+   M /branches/4.1/configure.ac
+   M /branches/4.1/doc/mpfr.texi
+   M /branches/4.1/src/mpfr.h
+   M /branches/4.1/src/version.c
+
+Updated version to 4.1.0-dev (due to changes since 4.1.0-rc1).
+------------------------------------------------------------------------
+r14042 | vlefevre | 2020-06-18 17:17:18 +0000 (Thu, 18 Jun 2020) | 54 lines
+Changed paths:
+   M /branches/4.1
+   M /branches/4.1/doc/mpfr.texi
+   M /branches/4.1/src/digamma.c
+   M /branches/4.1/src/get_str.c
+   M /branches/4.1/src/mpfr-longlong.h
+   M /branches/4.1/tests/mpfr-test.h
+   M /branches/4.1/tests/tabort_defalloc1.c
+   M /branches/4.1/tests/tabort_defalloc2.c
+   M /branches/4.1/tests/tcmp_ui.c
+   M /branches/4.1/tests/tdigamma.c
+   M /branches/4.1/tests/tests.c
+   M /branches/4.1/tests/tset_ld.c
+
+Merged r14021-14036 from the trunk:
+
+r14021:
+[tests] Skip tabort_defalloc1 and tabort_defalloc2 under Valgrind, as
+Valgrind complains due to the large allocation size.
+  * mpfr-test.h, tests.c: added tests_run_within_valgrind() function to
+    guess whether the test runs within Valgrind.
+  * tabort_defalloc1.c, tabort_defalloc2.c: skip the test (exit code 77)
+    if this function returns true.
+
+r14022-14023:
+[tests/tset_ld.c] In bug_20160907 (tests on subnormals, specific to
+x86 extended precision):
+  * Replaced an assertion by a test with detailed output.
+  * In case of incorrect result, detect whether Valgrind is used and
+    one gets the result obtained with Valgrind due to
+      https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=890215
+      https://bugs.kde.org/show_bug.cgi?id=421262
+    (long double behaves as double); in this case, output a message
+    without an error since Valgrind is the only cause of the
+    miscalculation.
+  * Corrected a value in a test, which did not match the comment.
+
+r14024-14027:
+[src/digamma.c]
+  * Replaced some MPFR_EXP / mpfr_get_exp by MPFR_GET_EXP to check that
+    the MPFR number has an exponent (i.e. it is not a special value).
+  * Added an integer overflow check on a precision.
+  * Fixed a bug: an exponent was read while the value could be zero.
+
+r14028:
+[tests/tdigamma.c] Increase the number of tests.
+
+r14029,14031:
+[doc/mpfr.texi] Specify the range of b for mpfr_get_str_ndigits.
+
+r14030:
+[src/get_str.c] Since the mpfr_get_str_ndigits function is in the
+public API, use MPFR_ASSERTN instead of MPFR_ASSERTD on the condition
+on the argument b in order to get an assertion failure (by default)
+if this condition is not satisfied.
+
+r14032,14035-14036:
+[src/mpfr-longlong.h] Applied patch on
+  https://gmplib.org/list-archives/gmp-bugs/2020-June/004807.html
+to fix add_ssaaaa and sub_ddmmss on arm / aarch64, in order to resolve
+  https://sympa.inria.fr/sympa/arc/mpfr/2020-06/msg00017.html
+  https://sympa.inria.fr/sympa/arc/mpfr/2020-06/msg00059.html
+
+r14034:
+[tests/tcmp_ui.c] Added a comment about a failing test with tcc if
+one adds tcc support for macros using __builtin_constant_p in mpfr.h
+by testing __TINYC__.
+Bug report against tcc: https://savannah.nongnu.org/bugs/?58606
+------------------------------------------------------------------------
+r14019 | vlefevre | 2020-06-13 13:22:33 +0000 (Sat, 13 Jun 2020) | 5 lines
+Changed paths:
+   M /branches/4.1
+   M /branches/4.1/configure.ac
+
+[configure.ac] No longer add -Wc++-compat to CFLAGS when the compiler
+is GCC not in C++ mode (reverting the change done in r13406) since this
+option is not available before GCC 4.1:
+  https://sympa.inria.fr/sympa/arc/mpfr/2020-06/msg00008.html
+(merged changeset r14018 from the trunk)
+------------------------------------------------------------------------
+r14016 | vlefevre | 2020-06-13 09:32:51 +0000 (Sat, 13 Jun 2020) | 7 lines
+Changed paths:
+   M /branches/4.1
+   M /branches/4.1/doc/mpfr.texi
+   M /branches/4.1/tests/tfpif.c
+
+Merged the latest changes from the trunk:
+
+r14012:
+[tests/tfpif.c] Updated comment about the bug detected on AIX.
+
+r14015:
+[doc/mpfr.texi] ACM TOMS article: use the preferred DOI URL.
+------------------------------------------------------------------------
+r14011 | vlefevre | 2020-06-13 01:05:59 +0000 (Sat, 13 Jun 2020) | 8 lines
+Changed paths:
+   M /branches/4.1
+   M /branches/4.1/NEWS
+   M /branches/4.1/tools/announce-text
+
+Merged the latest changes from the trunk:
+
+r14008,14010:
+[tools/announce-text] For release candidates, automatically adapt the
+flow of the text.
+
+r14009:
+[NEWS] Updated mpfr.org URLs (http → https).
+------------------------------------------------------------------------
+r14006 | vlefevre | 2020-06-12 17:55:05 +0000 (Fri, 12 Jun 2020) | 17 lines
+Changed paths:
+   M /branches/4.1
+   M /branches/4.1/README
+   M /branches/4.1/tests/tests.c
+   M /branches/4.1/tests/tfpif.c
+
+Merged the latest changes from the trunk:
+
+r14003:
+[tests/tfpif.c] Fixed a bug (in the test) detected on AIX[*], where
+an fclose failed due to a previous read failure. At the same time,
+check that a read failure no longer occurs. Note: the read failure
+made mpfr_fpif_import fail, but this is a test where it is expected
+to fail, i.e. we now check that it fails for a good reason.
+[*] gcc119.fsffrance.org on the GCC Compile farm.
+
+r14004:
+[tests/tests.c] Removed a useless "#include <errno.h>" (added in r5252,
+useless since r5253).
+
+r14005:
+[README] Added URL of the official GNU MPFR website and a note about the
+future migration, since InriaForge will shut down in December 2020.
+------------------------------------------------------------------------
+r14002 | vlefevre | 2020-06-12 12:17:11 +0000 (Fri, 12 Jun 2020) | 1 line
+Changed paths:
+   M /branches/4.1/ChangeLog
+
+ChangeLog update with "LC_ALL=en_US.UTF8 TZ=UTC0 svn log -rHEAD:0 -v".
+------------------------------------------------------------------------
 r14001 | vlefevre | 2020-06-12 12:10:28 +0000 (Fri, 12 Jun 2020) | 1 line
 Changed paths:
    M /branches/4.1/VERSION
