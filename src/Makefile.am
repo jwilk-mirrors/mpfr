@@ -95,7 +95,7 @@ libmpfr_la_LIBADD = @LIBOBJS@
 #        3.1.x    5:x:1
 #        4.0.x    6:x:0
 #        4.1.x    7:x:1
-libmpfr_la_LDFLAGS = $(MPFR_LDFLAGS) $(LIBMPFR_LDFLAGS) -version-info 7:0:1
+libmpfr_la_LDFLAGS = $(MPFR_LDFLAGS) $(LIBMPFR_LDFLAGS) -version-info 7:1:1
 
 GET_PATCHES_SH = $(top_srcdir)/tools/get_patches.sh
 PATCHES = $(top_srcdir)/PATCHES
