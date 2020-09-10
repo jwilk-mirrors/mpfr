@@ -439,7 +439,7 @@ dnl     to "icc -help", both options are equivalent; it also suggests
 dnl     to use -fp-model <arg> instead of -mp, but what is <arg>? Anyway
 dnl     -mieee-fp solves the tset_d failure due to a negative zero. This
 dnl     option has been introduced in ICC 9.0 for Linux (2005-06):
-dnl     http://www.ncsa.illinois.edu/UserInfo/Resources/Software/Intel/Compilers/9.0/C_ReleaseNotes.htm
+dnl     https://climserv.ipsl.polytechnique.fr/documentation/intel-icc/ReleaseNotes.htm
 AC_MSG_CHECKING(for non-MS-Windows ICC)
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #if (!defined(__ICC) && !defined(__INTEL_COMPILER)) || defined(_WIN32)
@@ -523,7 +523,7 @@ dnl build tree. Other OS with the same issue might be added later.
 dnl
 dnl References:
 dnl   https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=859732
-dnl   http://lists.gnu.org/archive/html/libtool/2017-05/msg00000.html
+dnl   https://lists.gnu.org/archive/html/libtool/2017-05/msg00000.html
 dnl
 dnl We need to check whether --disable-new-dtags is supported as alternate
 dnl linkers may be used (e.g., with tcc: CC=tcc LD=tcc).
