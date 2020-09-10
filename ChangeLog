@@ -1,4 +1,109 @@
 ------------------------------------------------------------------------
+r14112 | vlefevre | 2020-09-10 09:37:17 +0000 (Thu, 10 Sep 2020) | 2 lines
+Changed paths:
+   M /branches/4.1
+   M /branches/4.1/TODO
+   M /branches/4.1/configure.ac
+   M /branches/4.1/doc/README.dev
+   M /branches/4.1/src/const_euler.c
+   M /branches/4.1/src/erandom.c
+   M /branches/4.1/src/exceptions.c
+   M /branches/4.1/src/gamma_inc.c
+   M /branches/4.1/src/jn.c
+   M /branches/4.1/src/nrandom.c
+   M /branches/4.1/src/sub1sp.c
+   M /branches/4.1/src/vasprintf.c
+   M /branches/4.1/src/yn.c
+   M /branches/4.1/tests/Makefile.am
+   M /branches/4.1/tests/tsprintf.c
+   M /branches/4.1/tools/coverage
+   M /branches/4.1/tools/mbench/Makefile
+
+Updated URLs.
+(merged changesets r14106-14110 from the trunk)
+------------------------------------------------------------------------
+r14105 | vlefevre | 2020-09-10 08:19:25 +0000 (Thu, 10 Sep 2020) | 2 lines
+Changed paths:
+   M /branches/4.1
+   M /branches/4.1/src/pow_si.c
+   M /branches/4.1/src/strtofr.c
+
+Updated a freebsd.org URL (bug tracker).
+(merged changeset r14104 from the trunk)
+------------------------------------------------------------------------
+r14094 | vlefevre | 2020-07-20 22:17:23 +0000 (Mon, 20 Jul 2020) | 11 lines
+Changed paths:
+   M /branches/4.1
+   M /branches/4.1/src/get_d128.c
+
+[src/get_d128.c] For the special values, avoid double to _Decimal128
+conversions, as for such conversions, GCC generates from 2 to 3 MB in
+the shared library when the decimal encoding is BID, and there will be
+no fix in GCC:
+  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96173
+We now use computations on _Decimal128 constants directly, which could
+thus be done at compile time. We expect no problems similar to double,
+as the _Decimal128 implementation should follow the IEEE 754 rules.
+This commit should avoid a large part of the problem reported at:
+  https://gforge.inria.fr/tracker/?func=detail&atid=619&aid=21849&group_id=136
+(merged changesets r14087-14088 from the trunk)
+------------------------------------------------------------------------
+r14091 | vlefevre | 2020-07-20 21:12:34 +0000 (Mon, 20 Jul 2020) | 9 lines
+Changed paths:
+   M /branches/4.1
+   M /branches/4.1/tests/tests.c
+   M /branches/4.1/tests/tget_ld_2exp.c
+   M /branches/4.1/tests/tset_ld.c
+
+[tests] Various corrections for error messages in tests of long double
+(and double).
+  * tests.c: Simplified the d_trace and ld_trace functions:
+    we do not need a union (with its potentional padding) as
+    there are no aliasing issues with unsigned char.
+  * tget_ld_2exp.c: Corrected a function call in an error message.
+  * tset_ld.c: Fixed mpfr_out_str usage in error messages
+    (see the change in r12520).
+(merged changesets r14080-14083 from the trunk)
+------------------------------------------------------------------------
+r14090 | vlefevre | 2020-07-20 21:04:09 +0000 (Mon, 20 Jul 2020) | 2 lines
+Changed paths:
+   M /branches/4.1
+   M /branches/4.1/examples/version.c
+
+[examples/version.c] "Compiler:" line: detect TCC (__TINYC__ macro).
+(merged changeset r14079 from the trunk)
+------------------------------------------------------------------------
+r14089 | vlefevre | 2020-07-20 21:03:07 +0000 (Mon, 20 Jul 2020) | 2 lines
+Changed paths:
+   M /branches/4.1
+   M /branches/4.1/tests/tversion.c
+
+[tests/tversion.c] "Compiler:" line: detect TCC (__TINYC__ macro).
+(merged changeset r14078 from the trunk)
+------------------------------------------------------------------------
+r14073 | vlefevre | 2020-07-10 17:24:11 +0000 (Fri, 10 Jul 2020) | 1 line
+Changed paths:
+   M /branches/4.1/src/Makefile.am
+
+[src/Makefile.am] Updated -version-info to 7:1:1 for MPFR 4.1.1.
+------------------------------------------------------------------------
+r14068 | vlefevre | 2020-07-10 13:33:00 +0000 (Fri, 10 Jul 2020) | 1 line
+Changed paths:
+   M /branches/4.1/INSTALL
+   M /branches/4.1/VERSION
+   M /branches/4.1/configure.ac
+   M /branches/4.1/doc/mpfr.texi
+   M /branches/4.1/src/mpfr.h
+   M /branches/4.1/src/version.c
+
+Updated version to 4.1.1-dev.
+------------------------------------------------------------------------
+r14066 | vlefevre | 2020-07-10 11:57:10 +0000 (Fri, 10 Jul 2020) | 1 line
+Changed paths:
+   M /branches/4.1/ChangeLog
+
+ChangeLog update with "LC_ALL=en_US.UTF8 TZ=UTC0 svn log -rHEAD:0 -v".
+------------------------------------------------------------------------
 r14065 | vlefevre | 2020-07-10 11:52:33 +0000 (Fri, 10 Jul 2020) | 1 line
 Changed paths:
    M /branches/4.1/VERSION
@@ -21886,7 +21991,7 @@ Changed paths:
 
 [tools/mpfrlint] In "[[…]]" conditional expressions, replaced "="
 by the preferred (and equivalent) form "==".
-Discussion: http://www.zsh.org/mla/workers/2016/msg01711.html
+Discussion: https://www.zsh.org/mla/workers/2016/msg01711.html
 ------------------------------------------------------------------------
 r10872 | vlefevre | 2016-09-14 07:59:27 +0000 (Wed, 14 Sep 2016) | 1 line
 Changed paths:
@@ -25556,7 +25661,7 @@ r10255 | zimmerma | 2016-04-08 14:10:47 +0000 (Fri, 08 Apr 2016) | 2 lines
 Changed paths:
    M /trunk/src/mpfr-impl.h
 
-patch for Cygwin (cf http://trac.sagemath.org/ticket/20380)
+patch for Cygwin (cf https://trac.sagemath.org/ticket/20380)
 
 ------------------------------------------------------------------------
 r10254 | vlefevre | 2016-04-08 07:58:49 +0000 (Fri, 08 Apr 2016) | 1 line
@@ -30392,7 +30497,7 @@ Changed paths:
 
 [doc/faq.xsl] Remove the indent="no" to get the same behavior as before
 when using libxslt 1.1.27+. See:
-  http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=718535#10
+  https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=718535#10
 ------------------------------------------------------------------------
 r9572 | vlefevre | 2015-06-12 13:55:51 +0000 (Fri, 12 Jun 2015) | 2 lines
 Changed paths:
@@ -33912,7 +34017,7 @@ Changed paths:
    A /trunk/libtool-tcc-wl.patch
 
 Added libtool-tcc-wl.patch patch from
-  http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=663945#46
+  https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=663945#46
 to add tcc support to libtool 2.4.2 and below.
 In doc/README.dev, documented how to use this patch (before a release).
 ------------------------------------------------------------------------
@@ -35935,7 +36040,7 @@ Changed paths:
    M /trunk/doc/mpfr.texi
 
 [doc/mpfr.texi] "correctly-rounded" → "correctly rounded" (see rule on
-http://en.wikipedia.org/wiki/Wikipedia:HYPHEN#Hyphens and the IEEE 754
+https://en.wikipedia.org/wiki/Wikipedia:HYPHEN#Hyphens and the IEEE 754
 and ISO C standards don't use a hyphen either).
 ------------------------------------------------------------------------
 r8644 | vlefevre | 2013-08-05 02:13:23 +0000 (Mon, 05 Aug 2013) | 1 line
@@ -36267,7 +36372,7 @@ Changed paths:
    M /trunk/doc/README.dev
 
 [doc/README.dev] Suggest to test with "clang -fsanitize=undefined";
-see <http://blog.regehr.org/archives/963>.
+see <https://blog.regehr.org/archives/963>.
 ------------------------------------------------------------------------
 r8602 | zimmerma | 2013-07-10 13:05:06 +0000 (Wed, 10 Jul 2013) | 2 lines
 Changed paths:
@@ -40160,7 +40265,7 @@ Changed paths:
    M /trunk/src/mpfr.h
 
 [src/mpfr.h] Simple temporary fix following GMP's internal __gmp_const
-macro removal in <http://gmplib.org:8000/gmp/rev/d287cfaf6732> (and its
+macro removal in <https://gmplib.org/repo/gmp/rev/d287cfaf6732> (and its
 replacement by const): if __gmp_const isn't define, let's define it to
 const.
 ------------------------------------------------------------------------
@@ -45965,8 +46070,8 @@ Changed paths:
 patch from Patrick Pelissier to use clock_getime instead of rdtsc
 (use "make rt" instead of "make")
 References:
-http://stackoverflow.com/questions/3388134/rdtsc-accuracy-across-cpu-cores
-http://en.wikipedia.org/wiki/Time_Stamp_Counter
+https://stackoverflow.com/questions/3388134/rdtsc-accuracy-across-cpu-cores
+https://en.wikipedia.org/wiki/Time_Stamp_Counter
 
 ------------------------------------------------------------------------
 r7312 | vlefevre | 2010-12-25 17:24:58 +0000 (Sat, 25 Dec 2010) | 1 line
@@ -49215,7 +49320,7 @@ Changed paths:
 [exp_2.c] fixed problem reported by Sylvain Chevillard with following code
 	  and MPFR_EXP_2_THRESHOLD=36 (valgrind complains).
 	  It was due to the fact that GMP might allocate extra limbs,
-	  see http://gmplib.org/list-archives/gmp-devel/2010-June/001577.html.
+	  see https://gmplib.org/list-archives/gmp-devel/2010-June/001577.html.
 	  The fix is not optimal in the sense that GMP does not give a bound
 	  on the allocated memory, thus we can only guess.
 
@@ -50691,7 +50796,7 @@ Changed paths:
    M /trunk/tests/tstrtofr.c
 
 [tstrtofr.c] added test for 1.23e, cf
-	     http://gmplib.org/list-archives/gmp-bugs/2010-March/001898.html
+	     https://gmplib.org/list-archives/gmp-bugs/2010-March/001898.html
 
 ------------------------------------------------------------------------
 r6718 | vlefevre | 2010-03-11 01:02:58 +0000 (Thu, 11 Mar 2010) | 4 lines
@@ -50899,7 +51004,7 @@ to make it consistent with the one of the other files. In short, "and
 the GNU General Public License" has been removed, but it was ambiguous
 (we did not say which version of the GNU GPL) and useless (for GPLv3)
 because the LGPLv3 is compatible with the GPLv3:
-  http://www.fsf.org/licensing/licenses/gpl-faq.html#WhatDoesCompatMean
+  https://www.gnu.org/licenses/gpl-faq.html#WhatDoesCompatMean
 ------------------------------------------------------------------------
 r6685 | vlefevre | 2010-01-20 11:56:23 +0000 (Wed, 20 Jan 2010) | 3 lines
 Changed paths:
@@ -51951,7 +52056,7 @@ Changed paths:
    M /trunk/strtofr.c
 
 [strtofr.c] removed patch for old FreeBsd/Alpha bug
-	    (http://www.freebsd.org/cgi/query-pr.cgi?pr=72024)
+	    (https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=72024)
 
 ------------------------------------------------------------------------
 r6594 | vlefevre | 2009-11-26 14:15:51 +0000 (Thu, 26 Nov 2009) | 2 lines
@@ -53019,7 +53124,7 @@ Changed paths:
 
 tcmp_ld.c: use "long double" constants.
 Note: this might solve the tcmp_ld failure reported on
-http://www.linuxquestions.org/questions/linux-from-scratch-13/mpfr-2.4.1-check-failures-in-lfs-6.5-rc2-746538/
+https://www.linuxquestions.org/questions/linux-from-scratch-13/mpfr-2-4-1-check-failures-in-lfs-6-5-rc2-746538/
 (not tested).
 ------------------------------------------------------------------------
 r6376 | vlefevre | 2009-08-24 13:21:03 +0000 (Mon, 24 Aug 2009) | 1 line
@@ -56799,7 +56904,7 @@ Changed paths:
    M /trunk/mpfr.texi
 
 mpfr.texi: added .info extension in cross-references, to avoid the bug
-reported here: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=484740
+reported here: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=484740
 ------------------------------------------------------------------------
 r5841 | vlefevre | 2009-01-19 14:34:22 +0000 (Mon, 19 Jan 2009) | 1 line
 Changed paths:
@@ -58118,7 +58223,7 @@ Changed paths:
    M /trunk/mpfr-gmp.c
 
 [mpfr-gmp.c] replace tentative definitions by real definitions, solves
-	     configure problems with mpc (see http://lists.gforge.inria.fr/pipermail/mpc-discuss/2008-November/000048.html)
+	     configure problems with mpc (see https://lists.gforge.inria.fr/pipermail/mpc-discuss/2008-November/000048.html)
 
 ------------------------------------------------------------------------
 r5677 | vlefevre | 2008-11-18 01:01:33 +0000 (Tue, 18 Nov 2008) | 1 line
@@ -58926,7 +59031,7 @@ Changed paths:
    A /trunk/patch-aclocal-icc
 
 Added patch-aclocal-icc; this is a port of the patch posted on
-  http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=485421
+  https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=485421
 for aclocal.m4 when libtool 1.5.26-4 from Debian has been used.
 ------------------------------------------------------------------------
 r5599 | zimmerma | 2008-08-27 10:00:35 +0000 (Wed, 27 Aug 2008) | 3 lines
@@ -60040,7 +60145,7 @@ Changed paths:
    M /trunk/mpfr.texi
 
 mpfr.texi: changed the license for the inclusion of the manual in Debian
-(see <http://www.debian.org/vote/2006/vote_001>).
+(see <https://www.debian.org/vote/2006/vote_001).
 
 ------------------------------------------------------------------------
 r5396 | vlefevre | 2008-06-11 13:09:33 +0000 (Wed, 11 Jun 2008) | 3 lines
@@ -61420,7 +61525,7 @@ Changed paths:
 
 added compilation options suggested by Debian:
 http://alioth.debian.org/projects/hardening/
-http://lists.debian.org/debian-devel/2007/12/msg00090.html
+https://lists.debian.org/debian-devel/2007/12/msg00090.html
 (except -Wl,zrelro which does not seem to work)
 
 ------------------------------------------------------------------------
@@ -69680,7 +69785,7 @@ Changed paths:
 
 Removed --with-irix64 configure option and "case $OS_TYPE" code from
 configure.in; see
-  http://sympa.loria.fr/wwsympa/arc/mpfr/2006-11/msg00009.html
+  https://sympa.inria.fr/sympa/arc/mpfr/2006-11/msg00009.html
 for the reasons.
 
 ------------------------------------------------------------------------
@@ -77099,7 +77204,7 @@ Remove detection of C++ and Fortran due to libtool.
 Note (VL, 2010-02-08): this removal by an always false test was working
 with libtool 1.5.26, but doesn't work with libtool 2.2 to 2.2.6b (used
 by the MPFR 2.4.{0,1,2} tarballs).
-http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=568520
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=568520
 ------------------------------------------------------------------------
 r3292 | pelissip | 2005-02-11 11:28:00 +0000 (Fri, 11 Feb 2005) | 3 lines
 Changed paths:
@@ -79698,7 +79803,7 @@ Changed paths:
 
 Fix a bug in FreeBsd 5.20 / Alpha / Gcc 3.3.3.
 Not a MPFR bug, but add some code to avoid it.
-Reference: http://www.freebsd.org/cgi/query-pr.cgi?pr=72024
+Reference: https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=72024
 ------------------------------------------------------------------------
 r2981 | pelissip | 2004-09-21 11:46:11 +0000 (Tue, 21 Sep 2004) | 2 lines
 Changed paths:
