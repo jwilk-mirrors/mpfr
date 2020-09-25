@@ -140,6 +140,63 @@ check (long i, mpfr_rnd_t rnd)
   mpz_clear (z);
 }
 
+static void
+check_huge (void)
+{
+  if (getenv ("MPFR_CHECK_LARGEMEM") != NULL)
+    {
+      mpfr_t x;
+      mpz_t z;
+      long e;
+
+      /* Increase tests_memory_limit to the maximum in order to avoid
+         an obvious failure due to insufficient memory. */
+      tests_memory_limit = (size_t) -1;  /* no memory limit */
+
+      mpfr_init2 (x, 32);
+
+      /* In r14140, with a 32-bit ABI (GCC's -m32):
+         - With UBsan (-fsanitize=undefined -fno-sanitize-recover),
+           this fails with:
+             set_z_2exp.c:71:26: runtime error: signed integer overflow:
+             67108864 * 32 cannot be represented in type 'long int'
+         - With -D_MPFR_EXP_FORMAT=4, this fails with:
+             Expected 0.10001000000000000000000000000000E5
+             Got      0
+      */
+      mpz_init_set_ui (z, 17);
+      e = 0x7ffffff0;
+      mpz_mul_2exp (z, z, e);
+      mpz_add_ui (z, z, 1);
+      mpfr_set_z_2exp (x, z, -e, MPFR_RNDN);
+      if (mpfr_cmp_ui0 (x, 17) != 0)
+        {
+          printf ("Error 1 in check_huge\n");
+          printf ("Expected 0.10001000000000000000000000000000E5\n");
+          printf ("Got      ");
+          mpfr_dump (x);
+          exit (1);
+        }
+      mpz_clear (z);
+
+      mpz_init_set_ui (z, 17);
+      mpz_mul_2exp (z, z, 0xffffffb0);
+      mpz_add_ui (z, z, 1);
+      mpfr_set_z_2exp (x, z, -1, MPFR_RNDN);
+      if (! MPFR_IS_INF (x) || MPFR_IS_NEG (x))
+        {
+          printf ("Error 2 in check_huge\n");
+          printf ("Expected @Inf@\n");
+          printf ("Got      ");
+          mpfr_dump (x);
+          exit (1);
+        }
+      mpz_clear (z);
+
+      mpfr_clear (x);
+    }
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -151,6 +208,8 @@ main (int argc, char *argv[])
   for (j = 0; j < 200000; j++)
     check (randlimb () & LONG_MAX, RND_RAND ());
   check0 ();
+
+  check_huge ();
 
   tests_end_mpfr ();
 
