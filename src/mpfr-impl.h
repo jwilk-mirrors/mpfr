@@ -2474,7 +2474,8 @@ __MPFR_DECLSPEC void mpfr_rand_raw (mpfr_limb_ptr, gmp_randstate_t,
 __MPFR_DECLSPEC mpz_srcptr mpfr_bernoulli_cache (unsigned long);
 __MPFR_DECLSPEC void mpfr_bernoulli_freecache (void);
 
-__MPFR_DECLSPEC int mpfr_sincos_fast (mpfr_t, mpfr_t, mpfr_srcptr, mpfr_rnd_t);
+__MPFR_DECLSPEC int mpfr_sincos_fast (mpfr_ptr, mpfr_ptr, mpfr_srcptr,
+                                      mpfr_rnd_t);
 
 __MPFR_DECLSPEC double mpfr_scale2 (double, int);
 
@@ -2485,7 +2486,7 @@ __MPFR_DECLSPEC void mpfr_gamma_one_and_two_third (mpfr_ptr, mpfr_ptr,
                                                    mpfr_prec_t);
 
 __MPFR_DECLSPEC void mpfr_mpz_init (mpz_ptr);
-__MPFR_DECLSPEC void mpfr_mpz_init2 (mpz_t, mp_bitcnt_t);
+__MPFR_DECLSPEC void mpfr_mpz_init2 (mpz_ptr, mp_bitcnt_t);
 __MPFR_DECLSPEC void mpfr_mpz_clear (mpz_ptr);
 
 __MPFR_DECLSPEC int mpfr_odd_p (mpfr_srcptr);
