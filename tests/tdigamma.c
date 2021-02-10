@@ -90,6 +90,26 @@ bug20210206 (void)
   set_emax (emax);
 }
 
+/* another test that fails with GMP_CHECK_RANDOMIZE=1612741376857003
+   on revision 14398 */
+static void
+bug20210208 (void)
+{
+  mpfr_t x, y;
+  int inex;
+
+  mpfr_init2 (x, 73);
+  mpfr_init2 (y, 1);
+  mpfr_set_str (x, "1.4613470547060071827450", 10, MPFR_RNDN);
+  mpfr_clear_flags ();
+  inex = mpfr_digamma (y, x, MPFR_RNDU);
+  MPFR_ASSERTN (mpfr_cmp_si_2exp (y, -1, -12) == 0);
+  MPFR_ASSERTN (inex > 0);
+  MPFR_ASSERTN (__gmpfr_flags == MPFR_FLAGS_INEXACT);
+  mpfr_clear (x);
+  mpfr_clear (y);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -97,6 +117,7 @@ main (int argc, char *argv[])
 
   special ();
   bug20210206 ();
+  bug20210208 ();
 
   test_generic (MPFR_PREC_MIN, 200, 20);
 
