@@ -193,6 +193,10 @@ native_types (void)
   sprintf (buf, "%d", i);
   check_vsprintf (buf, "%d", i);
 
+  check_vsprintf ("0", "%d", 0);
+  check_vsprintf ("", "%.d", 0);
+  check_vsprintf ("", "%.0d", 0);
+
   sprintf (buf, "%e", d);
   check_vsprintf (buf, "%e", d);
 
@@ -227,9 +231,6 @@ decimal (void)
   mpfr_prec_t p = 128;
   mpfr_t x, y, z;
 
-  mpfr_init (z);
-  mpfr_init2 (x, p);
-
   /* specifier 'P' for precision */
   check_vsprintf ("128", "%Pu", p);
   check_vsprintf ("00128", "%.5Pu", p);
@@ -247,8 +248,18 @@ decimal (void)
   check_vsprintf ("0200:", "%0#+ -Po:", p);
   check_vsprintf ("+0000128 :", "%0+ *.*Pd:", -9, 7, p);
   check_vsprintf ("+12345   :", "%0+ -*.*Pd:", -9, -3, (mpfr_prec_t) 12345);
+  check_vsprintf ("0", "%Pu", (mpfr_prec_t) 0);
   /* Do not add a test like "%05.1Pd" as MS Windows is buggy: when
      a precision is given, the '0' flag must be ignored. */
+
+  /* specifier 'P' with precision field 0 */
+  check_vsprintf ("128", "%.Pu", p);
+  check_vsprintf ("128", "%.0Pd", p);
+  check_vsprintf ("", "%.Pu", (mpfr_prec_t) 0);
+  check_vsprintf ("", "%.0Pd", (mpfr_prec_t) 0);
+
+  mpfr_init (z);
+  mpfr_init2 (x, 128);
 
   /* special numbers */
   mpfr_set_inf (x, 1);
