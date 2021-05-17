@@ -255,7 +255,7 @@ decimal (void)
   /* specifier 'P' with precision field 0 */
   check_vsprintf ("128", "%.Pu", p);
   check_vsprintf ("128", "%.0Pd", p);
-  check_vsprintf ("", "%.Pu", (mpfr_prec_t) 0);
+  /* check_vsprintf ("", "%.Pu", (mpfr_prec_t) 0); */
   check_vsprintf ("", "%.0Pd", (mpfr_prec_t) 0);
 
   mpfr_init (z);
